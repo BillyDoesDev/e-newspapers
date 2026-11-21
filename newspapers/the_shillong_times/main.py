@@ -59,7 +59,7 @@ def render(
             paths = list(pool.map(download_page, enumerate(pages, start=1)))
 
         print("[*] Building PDF")
-        (download_dir / "output.pdf").write_bytes(
+        (download_dir / "paper.pdf").write_bytes(
             img2pdf.convert([str(p) for p in paths])
         )
 
@@ -67,7 +67,7 @@ def render(
         for p in paths:
             p.unlink()
 
-        print(f"[*] Done! PDF saved at {(download_dir / 'output.pdf')}")
+        print(f"[*] Done! PDF saved at {(download_dir / 'paper.pdf')}")
 
 
 # if __name__ == "__main__":
