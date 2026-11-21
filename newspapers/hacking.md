@@ -22,7 +22,7 @@ They seem to use the same mechanism, lol<br>
 <br>
 
 This is very easy: get the epub (yes, they let you download it):<br>
-https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/issues/157956/?json=true > https://embed-epaper.indiatimes.com/ccidist-ws/toi/<br>toidelhibs_delhi/issues/157956/content.epub<br>
+https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/issues/157956/?json=true > https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/issues/157956/content.epub<br>
 <br>
 extract the epub: you'll find the pdfs of all pages over there (wow, I know)<br>
 run `grep -oE "href=.*\.pdf\"" ./OPS/package.opf | cut -d\" -f2` in the extracted folder, and you'll get how to arrange them in order<br>

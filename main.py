@@ -20,11 +20,16 @@ import argparse
 from pathlib import Path
 from shutil import rmtree
 
-from newspapers import render_the_hindu, render_the_shillong_times
+from newspapers import (
+    render_the_hindu,
+    render_the_shillong_times,
+    render_times_of_india,
+)
 
 PAPERS = {
     "hindu": render_the_hindu,
     "shillong-times": render_the_shillong_times,
+    "times-of-india": render_times_of_india,
 }
 
 

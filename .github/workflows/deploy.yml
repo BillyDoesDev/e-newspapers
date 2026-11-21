@@ -27,6 +27,8 @@ jobs:
             args: --paper shillong-times --out output_dir
           - name: hindu
             args: --paper hindu
+          - name: times-of-india
+            args: --paper times-of-india
           # - name: third-script
           #   args: --out output_dir
     steps:
