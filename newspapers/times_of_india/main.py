@@ -5,6 +5,7 @@ from pathlib import Path
 from shutil import rmtree
 from zipfile import ZipFile
 
+import curl_cffi
 import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfWriter
@@ -53,9 +54,22 @@ def render(
 
     if not no_download:
         print("[*] downloading epub...")
-        r = requests.get(epub_url, headers=headers, timeout=60)
-        r.raise_for_status()
-        epub_path.write_bytes(r.content)
+        # r = curl_cffi.get(epub_url, impersonate="chrome")
+        # r.raise_for_status()
+        # epub_path.write_bytes(r.content)
+
+        with curl_cffi.requests.Session(impersonate="chrome") as s:
+            r = s.get(
+                epub_url, stream=True, timeout=None
+            )  # no total-time cutoff for big files
+            r.raise_for_status()
+            with open(epub_path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=1024 * 1024):  # 1 MB
+                    print("...", end="", flush=True)
+                    f.write(chunk)
+                    print("\b\b\b", end="", flush=True)
+            r.close()
+            print("\n", flush="True")
 
     print(f"[*] extracting to {extract_dir}")
     extract_dir.mkdir(parents=True, exist_ok=True)
