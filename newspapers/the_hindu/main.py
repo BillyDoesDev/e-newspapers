@@ -37,7 +37,7 @@ Optional (--render): pip install playwright pypdf && playwright install chromium
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, time, timedelta
+from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote
 
@@ -203,7 +203,7 @@ def save_pages(
 # --------------------------------------------------------------------------
 # Putting it together
 def build_edition(
-    issue_date: str = (datetime.now() - timedelta(days=datetime.now().time() < time(7, 30))).strftime("%Y-%m-%d"),
+    issue_date: str = datetime.now().strftime("%Y-%m-%d"),
     n_workers: int = 8,
     no_header: bool = False,
     render_pdf: bool = False,

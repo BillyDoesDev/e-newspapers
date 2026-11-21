@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, time, timedelta
+from datetime import datetime
 from pathlib import Path
 
 import img2pdf
@@ -17,11 +17,7 @@ headers = {
 
 
 def render(
-    issue_date: str = (
-        datetime.now() - timedelta(days=datetime.now().time() < time(7, 30))
-    )
-    .strftime("%d-%b-%Y")
-    .lower(),
+    issue_date: str = datetime.now().strftime("%d-%b-%Y").lower(),
     download_dir_path: Path = Path("output_dir"),
 ) -> None:
     with requests.Session() as s:
