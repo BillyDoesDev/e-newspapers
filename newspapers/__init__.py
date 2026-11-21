@@ -4,8 +4,10 @@ __all__ = [
     "render_the_shillong_times",
     "render_the_times_of_india",
     "render_times_of_india",
+    "render_uttarbangasambad",
 ]
 
 from .the_hindu.main import build_edition as render_the_hindu
 from .the_shillong_times.main import render as render_the_shillong_times
 from .times_of_india.main import render as render_times_of_india
+from .uttarbangasambad.main import render as render_uttarbangasambad

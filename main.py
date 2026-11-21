@@ -24,12 +24,14 @@ from newspapers import (
     render_the_hindu,
     render_the_shillong_times,
     render_times_of_india,
+    render_uttarbangasambad,
 )
 
 PAPERS = {
     "hindu": render_the_hindu,
     "shillong-times": render_the_shillong_times,
     "times-of-india": render_times_of_india,
+    "uttarbangasambad": render_uttarbangasambad,
 }
 
 

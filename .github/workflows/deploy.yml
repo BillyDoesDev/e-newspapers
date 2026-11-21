@@ -29,6 +29,8 @@ jobs:
             args: --paper hindu
           - name: times-of-india
             args: --paper times-of-india
+          - name: uttarbangasambad
+            args: --paper uttarbangasambad
           # - name: third-script
           #   args: --out output_dir
     steps:
