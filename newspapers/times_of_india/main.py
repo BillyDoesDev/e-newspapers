@@ -6,7 +6,8 @@ from shutil import rmtree
 from zipfile import ZipFile
 
 import curl_cffi
-import requests
+
+# import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfWriter
 
@@ -33,7 +34,7 @@ def fetch_default_manifest_url(issue_date: str) -> str:
         "submit": "Submit Query",
     }
 
-    response = requests.get(url, params=params, headers=headers, timeout=30)
+    response = curl_cffi.requests.get(url, params=params, impersonate="chrome")
     response.raise_for_status()
 
     data = response.json()
