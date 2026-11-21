@@ -269,11 +269,13 @@ def _toolbar(pno, npages, section, prev_l, next_l, has_scan, pdf_href):
     bar.append(
         '<button id="zout" title="Smaller">A&minus;</button><button id="zin" title="Larger">A+</button>'
     )
-    if has_scan:
-        bar.append('<button id="mode">Show original scan</button>')
-    bar.append('<button id="print" title="Print or save this page as PDF">Print / PDF</button>')
-    if pdf_href:
-        bar.append(f'<a href="{pdf_href}">PDF</a>')
+    # NOT EXACTLY FUNCTIONAL AT THE MOMENT
+    
+    # if has_scan:
+    #     bar.append('<button id="mode">Show original scan</button>')
+    # bar.append('<button id="print" title="Print or save this page as PDF">Print / PDF</button>')
+    # if pdf_href:
+    #     bar.append(f'<a href="{pdf_href}">PDF</a>')
     return "".join(bar)
 
 
