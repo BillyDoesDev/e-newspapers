@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, time, timedelta
+from pathlib import Path
+
+import img2pdf
+import jwt
+import requests
+from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+
+MAX_WORKERS = 8
+
+headers = {
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0"
+}
+
+
+def render(
+    issue_date: str = (
+        datetime.now() - timedelta(days=datetime.now().time() < time(7, 30))
+    )
+    .strftime("%d-%b-%Y")
+    .lower(),
+    download_dir_path: Path = Path("output_dir"),
+) -> None:
+    with requests.Session() as s:
+        # Make the connection pool big enough for all worker threads
+        s.mount("https://", HTTPAdapter(pool_maxsize=MAX_WORKERS))
+
+        r = s.get(
+            f"https://epaper.theshillongtimes.com/e-paper-issue/{issue_date}",
+            headers=headers,
+        )
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, "lxml")
+        pages = soup.find_all("img", class_="w-100")
+        print(f"[*] {len(pages)} pages found")
+
+        download_dir = Path(download_dir_path)
+        download_dir.mkdir(exist_ok=True, parents=True)
+
+        def download_page(item: tuple[int, BeautifulSoup]) -> Path:
+            idx, page = item
+            token = page.get("data-src").split("token=")[-1]
+            img_url = jwt.decode(token, options={"verify_signature": False})["img"]
+
+            print(f"[{idx:>02}/{len(pages)}] {img_url} ...")
+            resp = s.get(img_url, timeout=30)
+            resp.raise_for_status()
+
+            path = download_dir / f"p-{idx}.jpg"
+            path.write_bytes(resp.content)
+            return path
+
+        print("[*] Downloading images")
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+            # map() preserves input order, so paths stay in page order
+            paths = list(pool.map(download_page, enumerate(pages, start=1)))
+
+        print("[*] Building PDF")
+        (download_dir / "output.pdf").write_bytes(
+            img2pdf.convert([str(p) for p in paths])
+        )
+
+        print("[*] Cleaning up images")
+        for p in paths:
+            p.unlink()
+
+        print(f"[*] Done! PDF saved at {(download_dir / 'output.pdf')}")
+
+
+# if __name__ == "__main__":
+#     import argparse
+
+#     parser = argparse.ArgumentParser(
+#         description="Download The Shillong Times e-newspaper"
+#     )
+#     parser.add_argument(
+#         "--date",
+#         type=str,
+#         help="issue date; eg: 12-nov-2026 [default: today's date]",
+#         default=(datetime.now() - timedelta(days=datetime.now().time() < time(7, 30))).strftime("%d-%b-%Y").lower(),
+#     )
+#     parser.add_argument(
+#         "--out", help="download dir [default: 'output_dir']", default="output_dir"
+#     )
+#     args = parser.parse_args()
+
+#     render(args.date, args.out)
+
+#     # To convert from images to pdf (imagemagick):
+#     # convert "*.{png,jpg}" outfile.pdf
+#     # Then, you could run `ocrmypdf` on this
+
+#     # ToDo:
+#     # Per section extraction for higher resolution images, eg:
+#     # https://epaper.theshillongtimes.com/imgsrc/59515/1/410-481-1975-1641
+#     # You can obtain the coordinates (410-481-1975-1641 in this case) from
+#     # the same `data-src` extracted earlier, from the <map> tag

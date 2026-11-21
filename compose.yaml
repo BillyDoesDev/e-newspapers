@@ -1,0 +1,11 @@
+services:
+  e_newspaper_builder: # needs to match the compose argument in .github/workflows/deploy.yml
+    build: .
+    volumes:
+      - ./main.py:/app/main.py
+      - ./newspapers:/app/newspapers
+      - ./output_dir:/app/output_dir   # we need the output to land on the host for gh workflows
+
+# Run using:
+# $ docker compose run --rm --build e_newspaper_builder [args...]
+# $ docker compose run --rm e_newspaper_builder [args...] # if the image is already built

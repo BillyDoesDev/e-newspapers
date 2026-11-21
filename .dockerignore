@@ -1,0 +1,9 @@
+.git
+.venv
+output_dir
+__pycache__
+temp
+.temp
+trash
+.trash
+spam

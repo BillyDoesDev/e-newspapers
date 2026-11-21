@@ -1,0 +1,39 @@
+.archive-nav {
+  font: 14px/1.4 system-ui, sans-serif;
+  padding: 8px 12px;
+  margin: 0 0 12px;
+  background: #f3f3f3;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap
+}
+
+.archive-nav a {
+  text-decoration: none;
+  color: #0b4f8a
+}
+
+.archive-fig {
+  margin: 1em 0
+}
+
+.archive-fig img {
+  max-width: 100%;
+  height: auto;
+  display: block
+}
+
+.archive-fig figcaption {
+  font: 13px/1.4 system-ui, sans-serif;
+  color: #444;
+  margin-top: 4px
+}
+
+.archive-credit {
+  font: 12px/1.4 system-ui, sans-serif;
+  color: #777;
+  margin: 2em 0 1em;
+  border-top: 1px solid #ddd;
+  padding-top: 8px
+}
