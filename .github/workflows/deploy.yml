@@ -30,12 +30,12 @@ jobs:
           # - name: third-script
           #   args: --out output_dir
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
 
       - name: Run ${{ matrix.name }}
         run: docker compose run --rm --build e_newspaper_builder ${{ matrix.args }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@main
         with:
           name: site-${{ matrix.name }}
           path: output_dir
@@ -48,7 +48,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@main
         with:
           pattern: site-*
           path: site            # each artifact lands in site/site-<name>/
@@ -58,13 +58,13 @@ jobs:
           cd site
           for d in site-*; do mv "$d" "${d#site-}"; done
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@main
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@main
         with:
           path: site
 
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@main
 
 # And in Settings -> Pages, Source must be GitHub Actions (not “Deploy from a branch”)
