@@ -1,7 +1,6 @@
 .venv
 output_dir
 __pycache__
-uv.lock
 temp
 .temp
 trash
