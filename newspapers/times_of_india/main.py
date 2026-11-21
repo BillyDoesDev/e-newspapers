@@ -6,16 +6,8 @@ from shutil import rmtree
 from zipfile import ZipFile
 
 import curl_cffi
-
-# import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfWriter
-
-headers = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0",
-    "Accept": "application/json, text/html, */*",
-    "Referer": "https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/",
-}
 
 
 def fetch_default_manifest_url(issue_date: str) -> str:
