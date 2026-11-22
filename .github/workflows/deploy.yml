@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 2 * * 1-6"   # 02:00 UTC = 07:30 IST, Monday to Saturday
+    - cron: "0 2 * * *"   # 02:00 UTC = 07:30 IST, Monday to Saturday
   workflow_dispatch:        # keep the manual "Run workflow" button
 
 permissions:
