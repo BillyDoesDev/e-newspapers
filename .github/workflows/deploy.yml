@@ -31,6 +31,8 @@ jobs:
             args: --paper times-of-india
           - name: uttarbangasambad
             args: --paper uttarbangasambad
+          - name: anandabazar-patrika
+            args: --paper abp
           # - name: third-script
           #   args: --out output_dir
     steps:

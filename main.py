@@ -3,7 +3,7 @@
 """
 IMPORTANT NOTE
 
-Make sure all render functions have a signature similar to:
+MAKE SURE all render functions have a signature similar to:
     f(..., issue_date: str = '...', ..., download_dir_path: Path = Path('output_dir'), ...)
 
 with the appropriate page specific defaults. The default value for
@@ -60,7 +60,7 @@ def main():
 
     if args.date:
         PAPERS[args.paper](issue_date=args.date, download_dir_path=Path(args.out))
-    else:
+    else: # let the respective functions handle the default dates
         PAPERS[args.paper](download_dir_path=Path(args.out))
 
 
