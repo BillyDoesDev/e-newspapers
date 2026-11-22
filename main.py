@@ -18,7 +18,7 @@ check out `newspapers/hacking.md`
 
 import argparse
 from pathlib import Path
-from shutil import rmtree
+from shutil import copy2, rmtree
 
 from newspapers import (
     render_anandabazar_patrika,
@@ -33,8 +33,21 @@ PAPERS = {
     "shillong-times": render_the_shillong_times,
     "times-of-india": render_times_of_india,
     "uttarbangasambad": render_uttarbangasambad,
-    "abp": render_anandabazar_patrika,
+    "anandabazar-patrika": render_anandabazar_patrika,
 }
+
+
+def _failsafe(download_dir_path: Path = Path("output_dir")):
+    print("[X] The scripts failed :/")
+
+    # remove any previous outputs
+    rmtree(path=download_dir_path, ignore_errors=True)
+    download_dir_path.mkdir(exist_ok=True, parents=True)
+
+    copy2(Path("newspapers/assets/failsafe.html"), download_dir_path / "index.html")
+    copy2(Path("newspapers/assets/failsafe.pdf"), download_dir_path / "paper.pdf")
+
+    print(f"[*] Default failsafe outputs generated at {download_dir_path}")
 
 
 def main():
@@ -58,10 +71,14 @@ def main():
 
     rmtree(path=args.out, ignore_errors=True)
 
-    if args.date:
-        PAPERS[args.paper](issue_date=args.date, download_dir_path=Path(args.out))
-    else: # let the respective functions handle the default dates
-        PAPERS[args.paper](download_dir_path=Path(args.out))
+    try:
+        if args.date:
+            PAPERS[args.paper](issue_date=args.date, download_dir_path=Path(args.out))
+        else:  # let the respective functions handle the default dates
+            PAPERS[args.paper](download_dir_path=Path(args.out))
+    except Exception as e:  # noqa: BLE001
+        print("[X] Exception:", e)
+        _failsafe(download_dir_path=Path(args.out))
 
 
 if __name__ == "__main__":

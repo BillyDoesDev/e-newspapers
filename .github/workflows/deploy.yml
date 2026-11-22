@@ -32,7 +32,7 @@ jobs:
           - name: uttarbangasambad
             args: --paper uttarbangasambad
           - name: anandabazar-patrika
-            args: --paper abp
+            args: --paper anandabazar-patrika
           # - name: third-script
           #   args: --out output_dir
     steps:
