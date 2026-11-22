@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
@@ -39,7 +40,10 @@ def render(
         def download_page(item: tuple[int, BeautifulSoup]) -> Path:
             idx, page = item
             token = page.get("data-src").split("token=")[-1]
-            img_url = jwt.decode(token, options={"verify_signature": False})["img"]
+            if re.match(r"https:\/\/.*\.(png|jpg|jpeg)", token):
+                img_url = token
+            else:
+                img_url = jwt.decode(token, options={"verify_signature": False})["img"]
 
             print(f"[{idx:>02}/{len(pages)}] {img_url} ...")
             resp = s.get(img_url, timeout=30)
