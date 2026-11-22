@@ -9,13 +9,24 @@ import curl_cffi
 from bs4 import BeautifulSoup
 from pypdf import PdfWriter
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/",
+    "Upgrade-Insecure-Requests": "1",
+    "DNT": "1",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+}
+
 
 def fetch_default_manifest_url(issue_date: str) -> str:
     url = "https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/issues/"
 
     params = {
         "start": "",
-        "limit": "",
+        "limit": "100",
         "epubName": "toidelhibs_delhi_web",
         "fromDate": issue_date,
         "toDate": issue_date,
@@ -27,7 +38,7 @@ def fetch_default_manifest_url(issue_date: str) -> str:
     }
 
     response = curl_cffi.requests.get(
-        url, params=params, http_version="v3", impersonate="chrome"
+        url, params=params, http_version="v3", impersonate="firefox", headers=HEADERS
     )
     print(response.headers)
     if response.status_code == 403:
@@ -53,11 +64,13 @@ def render(
 
     if not no_download:
         print("[*] downloading epub...")
-        # r = curl_cffi.get(epub_url, impersonate="chrome")
+        # r = curl_cffi.get(epub_url, impersonate="firefox", headers=HEADERS)
         # r.raise_for_status()
         # epub_path.write_bytes(r.content)
 
-        with curl_cffi.requests.Session(http_version="v3", impersonate="chrome") as s:
+        with curl_cffi.requests.Session(
+            http_version="v3", impersonate="firefox", headers=HEADERS
+        ) as s:
             r = s.get(
                 epub_url, stream=True, timeout=None
             )  # no total-time cutoff for big files
