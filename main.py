@@ -21,6 +21,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from newspapers import (
+    render_anandabazar_patrika,
     render_the_hindu,
     render_the_shillong_times,
     render_times_of_india,
@@ -32,6 +33,7 @@ PAPERS = {
     "shillong-times": render_the_shillong_times,
     "times-of-india": render_times_of_india,
     "uttarbangasambad": render_uttarbangasambad,
+    "abp": render_anandabazar_patrika,
 }
 
 
