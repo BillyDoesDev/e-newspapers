@@ -13,6 +13,8 @@ MAX_WORKERS = 12
 def get_page_urls(issue_date: str = datetime.now().strftime("%Y-%m-%d")) -> list[str]:
     idx = 1
     pages = []
+
+    print("[*] Looking for pages...")
     while True:
         r = requests.get(
             f"https://epaper.anandabazar.com/api/v1/next-page/kolkata/15/{issue_date}/page-{idx}.html",
@@ -57,7 +59,7 @@ def render(
         path.write_bytes(r.content)
         return path
 
-    print("[*] Downloading images")
+    print("[*] Downloading pages")
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         paths = list(pool.map(download_page, enumerate(pages, start=1)))
 
