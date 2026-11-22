@@ -5,49 +5,9 @@ from pathlib import Path
 from shutil import rmtree
 from zipfile import ZipFile
 
-import curl_cffi
+import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfWriter
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Referer": "https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/",
-    "Upgrade-Insecure-Requests": "1",
-    "DNT": "1",
-    "Cache-Control": "no-cache",
-    "Pragma": "no-cache",
-}
-
-
-def fetch_default_manifest_url(issue_date: str) -> str:
-    url = "https://embed-epaper.indiatimes.com/ccidist-ws/toi/toidelhibs_delhi/issues/"
-
-    params = {
-        "start": "",
-        "limit": "100",
-        "epubName": "toidelhibs_delhi_web",
-        "fromDate": issue_date,
-        "toDate": issue_date,
-        "issueNameContains": "",
-        "sortOrder": "desc",
-        "draft": "true",
-        "skipSections": "true",
-        "submit": "Submit Query",
-    }
-
-    response = curl_cffi.requests.get(
-        url, params=params, http_version="v3", impersonate="firefox", headers=HEADERS
-    )
-    print(response.headers)
-    if response.status_code == 403:
-        print(response.text)
-
-    response.raise_for_status()
-
-    data = response.json()
-    return data["issues"]["web"][0]["url"] + "content.epub"
 
 
 def render(
@@ -59,31 +19,17 @@ def render(
     epub_path = download_dir_path / "download.epub"
     extract_dir = download_dir_path / "extracted"
 
-    epub_url = fetch_default_manifest_url(issue_date)
-    print("[*] fetched epub url:", epub_url)
-
     if not no_download:
         print("[*] downloading epub...")
-        # r = curl_cffi.get(epub_url, impersonate="firefox", headers=HEADERS)
-        # r.raise_for_status()
-        # epub_path.write_bytes(r.content)
-
-        with curl_cffi.requests.Session(
-            http_version="v3", impersonate="firefox", headers=HEADERS
-        ) as s:
-            r = s.get(
-                epub_url, stream=True, timeout=None
-            )  # no total-time cutoff for big files
-            if r.status_code == 403:
-                print(r.text)
-            r.raise_for_status()
-            with open(epub_path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=1024 * 1024):  # 1 MB
-                    print("...", end="", flush=True)
-                    f.write(chunk)
-                    print("\b\b\b", end="", flush=True)
-            r.close()
-            print("\n", flush="True")
+        # backend logic comes from `worker.py` in the project root
+        # check it out! :D
+        
+        r = requests.get(
+            f"https://e-paper-services.octopus-lure-shiny.workers.dev/epub/{issue_date}",
+            headers={"user-agent": "curl/8.23.0"},
+        )
+        r.raise_for_status()
+        epub_path.write_bytes(r.content)
 
     print(f"[*] extracting to {extract_dir}")
     extract_dir.mkdir(parents=True, exist_ok=True)
