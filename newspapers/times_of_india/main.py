@@ -26,8 +26,13 @@ def fetch_default_manifest_url(issue_date: str) -> str:
         "submit": "Submit Query",
     }
 
-    response = curl_cffi.requests.get(url, params=params, http_version="v3", impersonate="chrome")
+    response = curl_cffi.requests.get(
+        url, params=params, http_version="v3", impersonate="chrome"
+    )
     print(response.headers)
+    if response.status_code == 403:
+        print(response.text)
+
     response.raise_for_status()
 
     data = response.json()
@@ -56,6 +61,8 @@ def render(
             r = s.get(
                 epub_url, stream=True, timeout=None
             )  # no total-time cutoff for big files
+            if r.status_code == 403:
+                print(r.text)
             r.raise_for_status()
             with open(epub_path, "wb") as f:
                 for chunk in r.iter_content(chunk_size=1024 * 1024):  # 1 MB
