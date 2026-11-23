@@ -13,18 +13,32 @@ IST = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
 def collect_rows(root: pathlib.Path) -> list[str]:
     rows = []
     for d in sorted(p for p in root.iterdir() if p.is_dir()):
+        dir_label = html.escape(d.name.replace("-", " ").title())
+
         if (d / "index.html").exists():
-            href, kind = f"{quote(d.name)}/", "site"
-        elif (d / "paper.pdf").exists():
-            href, kind = f"{quote(d.name)}/paper.pdf", "pdf"
-        else:
-            continue  # nothing usable in this folder
-        label = html.escape(d.name.replace("-", " ").title())
-        rows.append(
-            f'<li class="paper {kind}"><a href="{href}">{label}</a> '
-            f'<span class="kind">{kind}</span></li>'
+            rows.append(_row(f"{quote(d.name)}/", "site", dir_label))
+            continue
+
+        pdfs = sorted(
+            f for f in d.iterdir() if f.is_file() and f.suffix.lower() == ".pdf"
         )
+        for pdf in pdfs:
+            if len(pdfs) == 1:
+                label = dir_label
+            else:
+                stem = (
+                    pdf.stem.removeprefix("paper_").replace("_", " ").replace("-", " ")
+                )
+                label = f"{dir_label}: {html.escape(stem.title())}"
+            rows.append(_row(f"{quote(d.name)}/{quote(pdf.name)}", "pdf", label))
     return rows
+
+
+def _row(href: str, kind: str, label: str) -> str:
+    return (
+        f'<li class="paper {kind}"><a href="{href}">{label}</a> '
+        f'<span class="kind">{kind}</span></li>'
+    )
 
 
 def main() -> None:

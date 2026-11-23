@@ -11,8 +11,7 @@ from pypdf import PdfWriter
 
 
 def _build_pdf_from_ccidist_epub(
-    epub_path: Path,
-    download_dir_path: Path,
+    epub_path: Path, download_dir_path: Path, paper_name: str = "paper"
 ) -> None:
     extract_dir = download_dir_path / "extracted"
     print(f"[*] extracting to {extract_dir}")
@@ -42,7 +41,7 @@ def _build_pdf_from_ccidist_epub(
         raise FileNotFoundError("No existing PDF files were referenced in package.opf")
 
     # Merge in OPF order.
-    output_path = download_dir_path / "paper.pdf"
+    output_path = download_dir_path / f"{paper_name}.pdf"
     writer = PdfWriter()
 
     for pdf_path in pdf_paths:
@@ -59,28 +58,38 @@ def _build_pdf_from_ccidist_epub(
     rmtree(extract_dir, ignore_errors=True)
 
 
+def _download_epub(epub_dl_path: Path, base_url: str, name: str, issue_date: str):
+    print(f"[*] downloading epub: {name} ...")
+    # backend logic comes from `worker.py` in the project root
+    # check it out! :D
+
+    r = requests.post(
+        "https://e-paper-services.octopus-lure-shiny.workers.dev/epub",
+        json={
+            "base_url": base_url,
+            "name": name,
+            "issue_date": issue_date,
+        },
+        headers={"accept": "application/json"},
+    )
+    r.raise_for_status()
+    epub_dl_path.write_bytes(r.content)
+
+
 def render(
     issue_date: str = datetime.now().strftime("%Y-%m-%d"),
     download_dir_path: Path = Path("output_dir"),
-    no_download: bool = False,
 ):
     download_dir_path.mkdir(parents=True, exist_ok=True)
     epub_path = download_dir_path / "download.epub"
 
-    if not no_download:
-        print("[*] downloading epub...")
-        # backend logic comes from `worker.py` in the project root
-        # check it out! :D
+    editions = ["toidelhibs_delhi", "toikolkatabs_kolkatacity"]
 
-        r = requests.get(
-            f"https://e-paper-services.octopus-lure-shiny.workers.dev/epub/{issue_date}",
-            headers={"user-agent": "curl/8.23.0"},
+    for e in editions:
+        _download_epub(
+            epub_path,
+            f"https://embed-epaper.indiatimes.com/ccidist-ws/toi/{e}/issues/",
+            f"{e}_web",
+            issue_date,
         )
-        r.raise_for_status()
-        epub_path.write_bytes(r.content)
-
-    _build_pdf_from_ccidist_epub(epub_path, download_dir_path)
-
-
-if __name__ == "__main__":
-    render(no_download=True)
+        _build_pdf_from_ccidist_epub(epub_path, download_dir_path, e.split("_")[1])
