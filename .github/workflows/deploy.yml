@@ -1,8 +1,8 @@
 name: Build and deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  # push: # too expensive each time: pretty redundant
+  #   branches: [main]
   schedule:
     - cron: '30 7,8 * * *' # ref: https://crontab.guru
       timezone: "Asia/Kolkata"
