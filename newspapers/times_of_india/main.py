@@ -10,27 +10,11 @@ from bs4 import BeautifulSoup
 from pypdf import PdfWriter
 
 
-def render(
-    issue_date: str = datetime.now().strftime("%Y-%m-%d"),
-    download_dir_path: Path = Path("output_dir"),
-    no_download: bool = False,
-):
-    download_dir_path.mkdir(parents=True, exist_ok=True)
-    epub_path = download_dir_path / "download.epub"
+def _build_pdf_from_ccidist_epub(
+    epub_path: Path,
+    download_dir_path: Path,
+) -> None:
     extract_dir = download_dir_path / "extracted"
-
-    if not no_download:
-        print("[*] downloading epub...")
-        # backend logic comes from `worker.py` in the project root
-        # check it out! :D
-        
-        r = requests.get(
-            f"https://e-paper-services.octopus-lure-shiny.workers.dev/epub/{issue_date}",
-            headers={"user-agent": "curl/8.23.0"},
-        )
-        r.raise_for_status()
-        epub_path.write_bytes(r.content)
-
     print(f"[*] extracting to {extract_dir}")
     extract_dir.mkdir(parents=True, exist_ok=True)
     with ZipFile(epub_path) as epub:
@@ -73,6 +57,29 @@ def render(
 
     # cleanup
     rmtree(extract_dir, ignore_errors=True)
+
+
+def render(
+    issue_date: str = datetime.now().strftime("%Y-%m-%d"),
+    download_dir_path: Path = Path("output_dir"),
+    no_download: bool = False,
+):
+    download_dir_path.mkdir(parents=True, exist_ok=True)
+    epub_path = download_dir_path / "download.epub"
+
+    if not no_download:
+        print("[*] downloading epub...")
+        # backend logic comes from `worker.py` in the project root
+        # check it out! :D
+
+        r = requests.get(
+            f"https://e-paper-services.octopus-lure-shiny.workers.dev/epub/{issue_date}",
+            headers={"user-agent": "curl/8.23.0"},
+        )
+        r.raise_for_status()
+        epub_path.write_bytes(r.content)
+
+    _build_pdf_from_ccidist_epub(epub_path, download_dir_path)
 
 
 if __name__ == "__main__":

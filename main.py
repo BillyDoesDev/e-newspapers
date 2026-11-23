@@ -17,10 +17,12 @@ check out `newspapers/hacking.md`
 """
 
 import argparse
+import sys
 from pathlib import Path
 from shutil import copy2, rmtree
 
 from newspapers import (
+    _build_pdf_from_ccidist_epub,
     render_anandabazar_patrika,
     render_the_hindu,
     render_the_shillong_times,
@@ -56,7 +58,6 @@ def main():
         "-p",
         "--paper",
         choices=PAPERS,
-        required=True,
         help="Paper code to render",
     )
     parser.add_argument(
@@ -65,20 +66,32 @@ def main():
         help="Edition date in the required format [default: today's date]",
     )
     parser.add_argument(
-        "--out", help="download dir [default: 'output_dir']", default="output_dir"
+        "-o",
+        "--out",
+        help="download dir [default: 'output_dir']",
+        default=Path("output_dir"),
     )
+    parser.add_argument("-x", "--x-ccidist-epub", help="path to epub")
     args = parser.parse_args()
+
+    if not (args.paper or args.x_ccidist_epub):
+        print("Error: need to specify either --paper or --x-ccidist-epub")
+        sys.exit(1)
 
     rmtree(path=args.out, ignore_errors=True)
 
+    if args.x_ccidist_epub:
+        _build_pdf_from_ccidist_epub(args.x_ccidist_epub, args.out)
+        return
+
     try:
         if args.date:
-            PAPERS[args.paper](issue_date=args.date, download_dir_path=Path(args.out))
+            PAPERS[args.paper](issue_date=args.date, download_dir_path=args.out)
         else:  # let the respective functions handle the default dates
-            PAPERS[args.paper](download_dir_path=Path(args.out))
+            PAPERS[args.paper](download_dir_path=args.out)
     except Exception as e:  # noqa: BLE001
         print("[X] Exception:", e)
-        _failsafe(download_dir_path=Path(args.out))
+        _failsafe(download_dir_path=args.out)
 
 
 if __name__ == "__main__":
