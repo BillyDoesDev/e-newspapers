@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>E-newspapers</title>
+    <style>
+        * {
+            background-color: black;
+            color: #eee;
+        }
+
+        body {
+            font: 16px/1.6 system-ui, sans-serif;
+            max-width: 36rem;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .paper {
+            padding: .5rem 0;
+            border-bottom: 1px solid #8884;
+        }
+
+        .paper a {
+            font-size: 1.1rem;
+        }
+
+        .kind {
+            font-size: .75rem;
+            text-transform: uppercase;
+            color: #888;
+            margin-left: .5rem;
+        }
+
+        small {
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>E-newspapers</h1>
+    <ul>
+        {{LINKS}}
+    </ul>
+    <p><small>Last built {{BUILT}}</small></p>
+</body>
+
+</html>

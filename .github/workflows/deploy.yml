@@ -55,6 +55,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v7      # needed for site_index/index.html
       - uses: actions/download-artifact@v8
         with:
           pattern: site-*
@@ -64,6 +65,10 @@ jobs:
         run: |
           cd site
           for d in site-*; do mv "$d" "${d#site-}"; done
+
+      - name: Generate top-level index.html
+        run: |
+          python3 site_index/build_index.py --site site --template site_index/index.html
 
       - uses: actions/configure-pages@v6
 

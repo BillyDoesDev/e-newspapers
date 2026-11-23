@@ -1,4 +1,4 @@
-The current day's paper gets built at **02:00 UTC** and is live at:
+The current day's paper gets built at **07:30 IST** and is live at:
 
 https://billydoesdev.github.io/e-newspapers/<paper-code\>/
 
