@@ -128,7 +128,7 @@ def build_article_page(
     page = re.sub(r'<meta property="og:[^>]*>\s*', "", page)
     style = "<style>\n" + static_css("article") + "\n</style>"
     nav = _nav(record, idx, ordered, ctx.has_layout)
-    credit = render_template("article_credit", label=html.escape(ctx.edition_label))
+    credit = render_template("article_credit", label=html.escape(ctx.edition_label), fetched_url=url)
     page = page.replace("</head>", style + "</head>", 1)
     page = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + nav, page, count=1)
     page = page.replace("</body>", credit + "</body>", 1)
