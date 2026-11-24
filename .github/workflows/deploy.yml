@@ -1,9 +1,12 @@
 name: Build and deploy to GitHub Pages
 
 on:
-  schedule:
-    - cron: "*/7 * * * *"
+  # https://crontab.guru/
+  schedule: [{cron: "*/6 * * * *"}]
+  # Run workflow manually
   workflow_dispatch:
+  # Run workflow when pushing on master/main
+  # push: {branches: ["master", "main"]}
 
 permissions:
   contents: read
