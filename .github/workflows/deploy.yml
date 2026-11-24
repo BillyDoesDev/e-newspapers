@@ -4,7 +4,7 @@ on:
   # push: # too expensive each time: pretty redundant
   #   branches: [main]
   schedule:
-    - cron: '30 7,8 * * *' # ref: https://crontab.guru
+    - cron: '27 7,8,10 * * *' # ref: https://crontab.guru
       timezone: "Asia/Kolkata"
   workflow_dispatch:           # keep the manual "Run workflow" button
 
