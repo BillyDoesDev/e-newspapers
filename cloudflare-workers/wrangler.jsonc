@@ -8,7 +8,7 @@
 	"triggers": {
 		// UTC: https://crontab.guru/
 		"crons": [
-			"*/5 * * * *"
+			"27 2,3 * * *"
 		]
 	},
 	"observability": {
