@@ -1,0 +1,17 @@
+{
+	"name": "e-paper-services",
+	"main": "src/worker.py",
+	"compatibility_date": "2026-08-01",
+	"compatibility_flags": [
+		"python_workers"
+	],
+	"triggers": {
+		// UTC: https://crontab.guru/
+		"crons": [
+			"*/5 * * * *"
+		]
+	},
+	"observability": {
+		"enabled": true
+	}
+}

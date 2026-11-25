@@ -1,0 +1,17 @@
+services:
+  shell:
+    image: pywrangler-worker
+    build: .
+    container_name: pywrangler-shell
+    working_dir: /app
+    volumes:
+      # # live source files
+      - ./src:/app/src
+      - ./wrangler.jsonc:/app/wrangler.jsonc
+      - ./.dev.vars:/app/.dev.vars
+      - ../pyproject.toml:/app/pyproject.toml
+    env_file:
+      - .env
+    ports:
+      - "8787:8787"
+    tty: true

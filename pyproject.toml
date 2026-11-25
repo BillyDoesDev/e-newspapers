@@ -3,11 +3,17 @@ name = "e-newspapers"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-    "beautifulsoup4>=4.15.0",
-    "curl-cffi>=0.17.0",
-    "img2pdf>=0.6.3",
-    "lxml>=6.1.3",
-    "pyjwt>=2.15.1",
-    "pypdf>=7.1.1",
-    "requests>=2.34.2",
+    "beautifulsoup4",
+    "img2pdf",
+    "lxml",
+    "pyjwt",
+    "pypdf",
+    "requests",
+    "fastapi[standard]",
+]
+
+[dependency-groups]
+dev = [
+    "workers-py",
+    "workers-runtime-sdk"
 ]

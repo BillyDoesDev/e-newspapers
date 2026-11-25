@@ -1,40 +1,5 @@
 #!/usr/bin/env python3
 
-"""
-Refer to cloudflare's pywrangler docs for more
-tree:
-.
-├── .env
-├── pyproject.toml
-├── src
-│  └── worker.py
-└── wrangler.jsonc
-
-dependencies:
-"fastapi[standard]",
-"requests",
-"workers-py",
-"workers-runtime-sdk"
-
-wrangler.jsonc:
-{
-        "name": "e-paper-services",
-        "main": "src/worker.py",
-        "compatibility_date": "2026-08-01",
-        "compatibility_flags": [
-                "python_workers"
-        ],
-        "observability": {
-                "enabled": true
-        }
-}
-"""
-
-"""
-This file is src/worker.py
-author: BillyDoesDev
-"""
-
 from datetime import datetime
 
 import requests
@@ -119,6 +84,8 @@ def get_epub_binary(e: Epub):
 ##############################################################
 # workers specific
 try:
+    import json
+
     import asgi
     from workers import Request, WorkerEntrypoint, fetch
 
@@ -143,6 +110,28 @@ try:
             # intercept end
 
             return await asgi.fetch(app, request, self.env)
+
+        async def scheduled(self, controller, env, ctx):
+            print("[*] preparing GH dispatch...")
+            env = self.env
+            # https://docs.github.com/en/rest/repos/repos?apiVersion=2026-03-10#create-a-repository-dispatch-event
+            resp = await fetch(
+                f"https://api.github.com/repos/{env.GH_REPO}/dispatches",
+                method="POST",
+                headers={
+                    "Accept": "application/vnd.github+json",
+                    "Authorization": f"Bearer {env.GH_TOKEN}",
+                    "X-GitHub-Api-Version": "2026-03-10",
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0",
+                    "Content-Type": "application/json",
+                },
+                body=json.dumps({"event_type": "on_demand_build"}),
+            )
+            print("[*] ret status:", resp.status)
+            if resp.status != 204:
+                raise RuntimeError(
+                    f"Dispatch failed: {resp.status} {await resp.text()}"
+                )
 
 except ModuleNotFoundError:
     pass

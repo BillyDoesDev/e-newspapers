@@ -6,3 +6,5 @@ temp
 trash
 .trash
 spam
+.env
+.dev.vars

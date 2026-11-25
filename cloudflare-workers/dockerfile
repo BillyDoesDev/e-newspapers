@@ -1,0 +1,20 @@
+# Ref: https://developers.cloudflare.com/workers/languages/python/
+# Check examples from https://github.com/cloudflare/python-workers-examples/tree/main/fastapi
+
+FROM node:24-bookworm-slim
+
+RUN apt update && \
+    apt install -y python3 python3-pip curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -LSf https://astral.sh/uv/install.sh | sh
+
+ENV PATH="/root/.local/bin:$PATH"
+# Suppress uv hardlinking issues
+ENV UV_LINK_MODE=copy
+
+WORKDIR /app
+
+RUN uv tool install workers-py
+
+EXPOSE 8787
