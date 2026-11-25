@@ -111,6 +111,7 @@ try:
 
             return await asgi.fetch(app, request, self.env)
 
+        # https://developers.cloudflare.com/workers/configuration/cron-triggers/#1-define-a-scheduled-event-listener
         async def scheduled(self, controller, env, ctx):
             print("[*] preparing GH dispatch...")
             env = self.env

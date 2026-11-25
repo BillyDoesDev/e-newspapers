@@ -1,7 +1,9 @@
 ## Just a bunch of e-newspapers
 
 Site live at: https://billydoesdev.github.io/e-newspapers/<br>
-Daily builds at **07:30 IST**<br>
+
+Daily builds by ~**07:30 IST**<br>
+*...hopefully,* since GitHub's CI/CD has been quite unreliable lately :/
 
 LICENSE: [MIT](LICENSE)
 

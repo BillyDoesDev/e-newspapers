@@ -5,10 +5,12 @@
 	"compatibility_flags": [
 		"python_workers"
 	],
+	// https://developers.cloudflare.com/workers/configuration/cron-triggers/#via-cloudflareconfigts
 	"triggers": {
 		// UTC: https://crontab.guru/
 		"crons": [
-			"27 2,3 * * *"
+			"55 1 * * *",
+			"10 2 * * *"
 		]
 	},
 	"observability": {
