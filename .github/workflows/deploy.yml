@@ -3,6 +3,8 @@ name: Build and deploy to GitHub Pages
 on:
   # push:
   #   branches: [main]
+  repository_dispatch:
+    types: [on_demand_build]
   schedule:
     - cron: "13 2-5 * * *"     # (UTC) - https://crontab.guru
   workflow_dispatch:           # keep the manual "Run workflow" button
