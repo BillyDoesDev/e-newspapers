@@ -4,10 +4,14 @@ from datetime import datetime
 from pathlib import Path
 
 import img2pdf
+import requests
 from bs4 import BeautifulSoup
-from curl_cffi import requests
 
 MAX_WORKERS = 12
+
+headers = {
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0"
+}
 
 
 def get_page_urls(issue_date: str = datetime.now().strftime("%Y-%m-%d")) -> list[str]:
@@ -18,8 +22,7 @@ def get_page_urls(issue_date: str = datetime.now().strftime("%Y-%m-%d")) -> list
     while True:
         r = requests.get(
             f"https://epaper.anandabazar.com/api/v1/next-page/kolkata/15/{issue_date}/page-{idx}.html",
-            http_version="v3",
-            impersonate="chrome",
+            headers=headers,
         )
         try:
             r.raise_for_status()
@@ -52,7 +55,7 @@ def render(
     def download_page(item: tuple[int, str]) -> Path:
         idx, url = item
         print(f"[{idx:>02}/{len(pages)}] {url} ...")
-        r = requests.get(url, http_version="v3", impersonate="chrome", timeout=3000)
+        r = requests.get(url, headers=headers, timeout=3000)
         r.raise_for_status()
 
         path = download_dir / f"p-{idx}.jpg"
