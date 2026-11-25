@@ -18,6 +18,7 @@ check out `newspapers/hacking.md`
 
 import argparse
 import sys
+import traceback
 from pathlib import Path
 from shutil import copy2, rmtree
 
@@ -89,8 +90,9 @@ def main():
             PAPERS[args.paper](issue_date=args.date, download_dir_path=args.out)
         else:  # let the respective functions handle the default dates
             PAPERS[args.paper](download_dir_path=args.out)
-    except Exception as e:  # noqa: BLE001
-        print("[X] Exception:", e)
+    except Exception:  # noqa: BLE001
+        # print("[X] Exception:", e)
+        print(traceback.format_exc())
         _failsafe(download_dir_path=args.out)
 
 

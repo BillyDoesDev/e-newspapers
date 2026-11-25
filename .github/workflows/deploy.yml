@@ -25,7 +25,7 @@ jobs:
       matrix:
         include:
           - name: shillong-times
-            args: --paper shillong-times --out output_dir
+            args: --paper shillong-times
           - name: hindu
             args: --paper hindu
           - name: times-of-india
@@ -35,7 +35,7 @@ jobs:
           - name: anandabazar-patrika
             args: --paper anandabazar-patrika
           # - name: third-script
-          #   args: --out output_dir
+          #   args: --out output_dir --arg1 blah --arg2 3
     steps:
       - uses: actions/checkout@v7
 

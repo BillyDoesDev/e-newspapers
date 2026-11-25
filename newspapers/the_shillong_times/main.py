@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-import re
+# import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 
 import img2pdf
-import jwt
+
+# import jwt
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
@@ -39,13 +40,16 @@ def render(
 
         def download_page(item: tuple[int, BeautifulSoup]) -> Path:
             idx, page = item
-            token = page.get("data-src").split("token=")[-1]
-            if re.match(r"https:\/\/.*\.(png|jpg|jpeg)", token):
-                img_url = token
-            else:
-                img_url = jwt.decode(token, options={"verify_signature": False})["img"]
+            _ = page.get("data-src")
+            # token = _.split("token=")[-1]
+            # if re.match(r"https:\/\/.*\.(png|jpg|jpeg)", token):
+            #     img_url = token
+            # else:
+            #     img_url = jwt.decode(token.split("&")[0], options={"verify_signature": False})["img"]
 
-            print(f"[{idx:>02}/{len(pages)}] {img_url} ...")
+            img_url = _
+
+            print(f"[{idx:>02}/{len(pages)}] {img_url[:50]} ...")
             resp = s.get(img_url, timeout=30)
             resp.raise_for_status()
 
