@@ -18,19 +18,37 @@ headers = {
 }
 
 
+def get_issue_url(issue_date: str) -> str:
+    url = "https://epaper.theshillongtimes.com/wp-admin/admin-ajax.php"
+    params = {
+        "action": "find_issue",
+        "edition": "16",
+        "date": issue_date,
+    }
+
+    r = requests.get(
+        url,
+        params=params,
+        headers=headers,
+    )
+
+    r.raise_for_status()
+
+    print(f"[*] Issue URL for {issue_date}: {r.text}")
+    return r.text
+
+
 def render(
-    issue_date: str = datetime.now().strftime("%d-%b-%Y").lower(),
+    issue_date: str = datetime.now().strftime("%Y-%m-%d"),
     download_dir_path: Path = Path("output_dir"),
 ) -> None:
     with requests.Session() as s:
         # Make the connection pool big enough for all worker threads
         s.mount("https://", HTTPAdapter(pool_maxsize=MAX_WORKERS))
 
-        r = s.get(
-            f"https://epaper.theshillongtimes.com/e-paper-issue/{issue_date}",
-            headers=headers,
-        )
+        r = s.get(get_issue_url(issue_date), headers=headers)
         r.raise_for_status()
+
         soup = BeautifulSoup(r.text, "lxml")
         pages = soup.find_all("img", class_="w-100")
         print(f"[*] {len(pages)} pages found")
@@ -74,31 +92,12 @@ def render(
         print(f"[*] Done! PDF saved at {(download_dir / 'paper.pdf')}")
 
 
-# if __name__ == "__main__":
-#     import argparse
+# To convert from images to pdf (imagemagick):
+# convert "*.{png,jpg}" outfile.pdf
+# Then, you could run `ocrmypdf` on this
 
-#     parser = argparse.ArgumentParser(
-#         description="Download The Shillong Times e-newspaper"
-#     )
-#     parser.add_argument(
-#         "--date",
-#         type=str,
-#         help="issue date; eg: 12-nov-2026 [default: today's date]",
-#         default=(datetime.now() - timedelta(days=datetime.now().time() < time(7, 30))).strftime("%d-%b-%Y").lower(),
-#     )
-#     parser.add_argument(
-#         "--out", help="download dir [default: 'output_dir']", default="output_dir"
-#     )
-#     args = parser.parse_args()
-
-#     render(args.date, args.out)
-
-#     # To convert from images to pdf (imagemagick):
-#     # convert "*.{png,jpg}" outfile.pdf
-#     # Then, you could run `ocrmypdf` on this
-
-#     # ToDo:
-#     # Per section extraction for higher resolution images, eg:
-#     # https://epaper.theshillongtimes.com/imgsrc/59515/1/410-481-1975-1641
-#     # You can obtain the coordinates (410-481-1975-1641 in this case) from
-#     # the same `data-src` extracted earlier, from the <map> tag
+# ToDo:
+# Per section extraction for higher resolution images, eg:
+# https://epaper.theshillongtimes.com/imgsrc/59515/1/410-481-1975-1641
+# You can obtain the coordinates (410-481-1975-1641 in this case) from
+# the same `data-src` extracted earlier, from the <map> tag
